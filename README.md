@@ -1,7 +1,7 @@
 # ccstats
 
-A Claude Code statusline + detail viewer that surfaces real-time usage at the
-bottom of your CLI:
+A Claude Code statusline that surfaces real-time usage at the bottom of your
+CLI:
 
 ```
 Opus 4.7 · 14m · 23 turns · ctx 47% (94k/1M)
@@ -13,8 +13,8 @@ tip: context filling up — consider /compact before next big task
 
 The 5-hour usage % and reset time on line 2 come from Claude Code's
 statusline payload (`rate_limits.five_hour.used_percentage` and
-`resets_at`) — they match what `/usage` shows because they share the
-same data source.
+`resets_at`) — they share the same data source as Claude Code's built-in
+usage view.
 
 When you're past plan limit (overage active), the line just shows the
 percentage above 100%:
@@ -41,10 +41,6 @@ On a fresh session before the first API response, line 2 shows
 `Usage — (Max5) · Resets —` because `rate_limits` is absent until the model
 has responded once.
 
-**Detail TUI** (`/usage` or `ccstats detail`): full-screen Bubble Tea view
-with token breakdown, per-model cost, 5-hour-window progress bars, and a
-projected end-of-window estimate based on burn rate.
-
 **CSV log** (`~/.claude/ccstats/sessions.csv`): one row per session, upserted
 after every turn (via the `Stop` hook). Schema:
 
@@ -61,16 +57,14 @@ cache_read,cache_create,cost_usd,burn_rate_tpm
 ```
 
 This builds `ccstats`, copies the default tips into `~/.claude/ccstats/tips/`,
-installs the `/usage` slash command into `~/.claude/commands/`, and prints the
-settings snippet to merge.
+and prints the settings snippet to merge.
 
 Manual install:
 
 1. `mkdir -p ~/.local/bin && go build -o ~/.local/bin/ccstats ./cmd/ccstats`
 2. Copy `tips/*.md` to `~/.claude/ccstats/tips/`
-3. Copy `commands/usage.md` to `~/.claude/commands/usage.md`
-4. Merge `settings.example.json` into `~/.claude/settings.json`
-5. Restart Claude Code
+3. Merge `settings.example.json` into `~/.claude/settings.json`
+4. Restart Claude Code
 
 ## How tips work
 
@@ -132,8 +126,6 @@ internal/stats/              session aggregator + 5h window aggregator
 internal/render/             dim 4-line statusline + plan picker
 internal/tips/               markdown loader + expression evaluator
 internal/csvlog/             atomic upsert into sessions.csv
-internal/detail/             Bubble Tea TUI
 tips/                        default tip knowledge base
-commands/usage.md            /usage slash command
 settings.example.json        snippet to merge into ~/.claude/settings.json
 ```

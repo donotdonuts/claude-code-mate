@@ -1,25 +1,23 @@
 # ccstats — guidance for Claude Code
 
-A Go statusline + detail TUI for Claude Code. Reads the JSON payload Claude
-Code pipes to the statusline command on stdin, emits a 4–5 line summary on
-stdout. Binary lives at `~/.local/bin/ccstats` after `./install.sh`.
+A Go statusline for Claude Code. Reads the JSON payload Claude Code pipes to
+the statusline command on stdin, emits a 4–5 line summary on stdout. Binary
+lives at `~/.local/bin/ccstats` after `./install.sh`.
 
 ## Layout
 
 ```
-cmd/ccstats/main.go      entry; dispatches statusline / record / detail / version / help
+cmd/ccstats/main.go      entry; dispatches statusline / record / version / help
 internal/transcript/     JSONL transcript parser
 internal/stats/          per-session aggregator + 5h window aggregator
 internal/pricing/        hardcoded price table + cost compute
 internal/render/         dim 4-line statusline + plan auto-detection
 internal/tips/           markdown loader + expression evaluator + sticky picker
 internal/csvlog/         atomic upsert into ~/.claude/ccstats/sessions.csv
-internal/detail/         Bubble Tea full-screen TUI (`/usage`)
 internal/account/        reads ~/.claude.json for plan tier
-commands/usage.md        /usage slash command
 tips/                    default tip knowledge base (one .md per tip)
 settings.example.json    snippet to merge into ~/.claude/settings.json
-install.sh               build + copy tips + copy slash command
+install.sh               build + copy tips
 ```
 
 ## Invariants
@@ -27,7 +25,7 @@ install.sh               build + copy tips + copy slash command
 - **Payload is authoritative.** `rate_limits.five_hour.used_percentage`,
   `rate_limits.five_hour.resets_at`, and `context_window.used_percentage`
   come straight from Claude Code's stdin payload — never recompute these
-  from the transcript. They must match what `/usage` shows.
+  from the transcript.
 - **Transcript is the fallback** for things the payload doesn't carry
   (per-model breakdown, burn rate, turn count).
 - **No stdin = exit 0.** The statusline must never block or error when

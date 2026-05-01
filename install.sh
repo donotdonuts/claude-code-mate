@@ -21,10 +21,6 @@ echo "==> Installing default tips into $CCSTATS_DIR/tips/"
 mkdir -p "$CCSTATS_DIR/tips"
 cp -n "$HERE"/tips/*.md "$CCSTATS_DIR/tips/" || true
 
-echo "==> Installing /usage slash command into $CLAUDE_DIR/commands/"
-mkdir -p "$CLAUDE_DIR/commands"
-cp -n "$HERE/commands/usage.md" "$CLAUDE_DIR/commands/usage.md" || true
-
 echo
 echo "==> Merge this into $CLAUDE_DIR/settings.json (or settings.local.json):"
 cat "$HERE/settings.example.json"
