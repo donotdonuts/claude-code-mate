@@ -1,0 +1,8 @@
+# Build output — install.sh produces this in the repo root before moving it to ~/.local/bin.
+ccstats
+
+# Editor / OS noise
+.DS_Store
+*.swp
+.idea/
+.vscode/
