@@ -211,9 +211,26 @@ func Run(transcriptPath string) error {
 	win, _ := stats.ComputeWindow(time.Now())
 	acct, _ := account.Load()
 	plan := render.PlanFromAccount(acct)
-	p := tea.NewProgram(model{sess: sess, win: win, plan: plan, account: acct, now: time.Now()}, tea.WithAltScreen())
+	m := model{sess: sess, win: win, plan: plan, account: acct, now: time.Now()}
+
+	if !isTTY(os.Stdout) {
+		out := strings.TrimSuffix(m.View(), dimStyle.Render("press q to quit"))
+		fmt.Print(strings.TrimRight(out, "\n"))
+		fmt.Println()
+		return nil
+	}
+
+	p := tea.NewProgram(m, tea.WithAltScreen())
 	_, err = p.Run()
 	return err
+}
+
+func isTTY(f *os.File) bool {
+	fi, err := f.Stat()
+	if err != nil {
+		return false
+	}
+	return (fi.Mode() & os.ModeCharDevice) != 0
 }
 
 func RunLatest() error {
