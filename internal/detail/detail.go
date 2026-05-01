@@ -49,7 +49,16 @@ var (
 func (m model) View() string {
 	var b strings.Builder
 	b.WriteString(titleStyle.Render("Claude Code — Session Detail"))
-	b.WriteString("\n\n")
+	b.WriteString("\n")
+	if shares := m.sess.ModelBreakdown(); len(shares) > 0 {
+		parts := make([]string, 0, len(shares))
+		for _, s := range shares {
+			parts = append(parts, fmt.Sprintf("%s %.0f%%", s.Model, s.Pct))
+		}
+		b.WriteString(dimStyle.Render(strings.Join(parts, " · ")))
+		b.WriteString("\n")
+	}
+	b.WriteString("\n")
 
 	b.WriteString(headerStyle.Render("Current Session"))
 	b.WriteString("\n")

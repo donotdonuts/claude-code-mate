@@ -1,5 +1,5 @@
 ---
-description: Show full-screen Claude Code usage detail (cost, tokens, 5-hour window, burn rate)
+description: Open Claude Code usage detail (full-screen TUI in a new Terminal window)
 ---
 
-!`ccstats detail`
+!`osascript -e 'tell application "Terminal" to activate' -e 'tell application "Terminal" to do script "ccstats detail; exit"'`
