@@ -55,6 +55,25 @@ func (s *SessionStats) DurationMin() float64 {
 	return s.Duration().Minutes()
 }
 
+// Finalize stamps the session's "as of" time to now and recomputes the burn
+// rate as total session tokens divided by wall-clock minutes since the first
+// transcript entry. Call this once after Compute so the statusline shows
+// elapsed time since the user opened Claude in the terminal — not just the
+// span between the first and last assistant message — and so the burn rate
+// stays consistent with that elapsed time even when sessions span multiple
+// 5-hour rate-limit windows.
+func (s *SessionStats) Finalize(now time.Time) {
+	if s.Start.IsZero() {
+		return
+	}
+	s.LastActivity = now
+	mins := s.DurationMin()
+	if mins < 1 {
+		mins = 1
+	}
+	s.BurnRate = float64(s.TotalTokens()) / mins
+}
+
 func (s *SessionStats) TotalTokens() int {
 	return s.TotalInput + s.TotalOutput + s.TotalCacheRead + s.TotalCacheCreate
 }
@@ -104,14 +123,8 @@ func ShortName(model string) string {
 	return model
 }
 
-type burnEntry struct {
-	ts     time.Time
-	tokens int
-}
-
 func Compute(transcriptPath string) (*SessionStats, error) {
 	s := &SessionStats{Models: make(map[string]*ModelUsage)}
-	var burns []burnEntry
 
 	err := transcript.IterateFile(transcriptPath, func(e *transcript.Entry) error {
 		if e.IsSidechain {
@@ -171,41 +184,13 @@ func Compute(transcriptPath string) (*SessionStats, error) {
 				m.CacheCreationTokens += u.CacheCreationInputTokens
 				m.Cost += cost
 				m.Turns++
-
-				totalTok := u.InputTokens + u.OutputTokens + u.CacheReadInputTokens + u.CacheCreationInputTokens
-				burns = append(burns, burnEntry{ts: ts, tokens: totalTok})
 			}
 			s.LOCDelta += countLOCInAssistantContent(msg.Content)
 		}
 		return nil
 	})
 
-	s.BurnRate = computeBurnRate(burns, 10*time.Minute)
 	return s, err
-}
-
-func computeBurnRate(entries []burnEntry, window time.Duration) float64 {
-	if len(entries) == 0 {
-		return 0
-	}
-	end := entries[len(entries)-1].ts
-	cutoff := end.Add(-window)
-	var total int
-	earliest := end
-	for _, e := range entries {
-		if e.ts.Before(cutoff) {
-			continue
-		}
-		total += e.tokens
-		if e.ts.Before(earliest) {
-			earliest = e.ts
-		}
-	}
-	mins := end.Sub(earliest).Minutes()
-	if mins < 1 {
-		mins = 1
-	}
-	return float64(total) / mins
 }
 
 func countWordsInUserContent(raw json.RawMessage) int {

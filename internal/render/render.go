@@ -12,9 +12,51 @@ import (
 )
 
 const (
-	dim   = "\x1b[2m"
-	reset = "\x1b[0m"
+	dim    = "\x1b[2m"
+	reset  = "\x1b[0m"
+	green  = "\x1b[32m"
+	yellow = "\x1b[33m"
+	red    = "\x1b[31m"
+	blue   = "\x1b[34m"
 )
+
+const barCells = 8
+
+// bar renders a small filled/empty block bar in the given color, then
+// restores dim mode for the surrounding statusline text.
+func bar(pct float64, color string) string {
+	if pct < 0 {
+		pct = 0
+	}
+	if pct > 100 {
+		pct = 100
+	}
+	filled := int(pct/100*float64(barCells) + 0.5)
+	var b strings.Builder
+	b.WriteString(reset)
+	b.WriteString(color)
+	for i := 0; i < filled; i++ {
+		b.WriteString("█")
+	}
+	b.WriteString(dim)
+	for i := filled; i < barCells; i++ {
+		b.WriteString("░")
+	}
+	b.WriteString(reset)
+	b.WriteString(dim)
+	return b.String()
+}
+
+func ctxColor(pct float64) string {
+	switch {
+	case pct < 30:
+		return green
+	case pct < 80:
+		return yellow
+	default:
+		return red
+	}
+}
 
 type Limit struct {
 	UsedPercentage float64
@@ -109,7 +151,7 @@ func line1(v View) string {
 	default:
 		pct = v.Sess.ContextPct()
 	}
-	ctx := fmt.Sprintf("ctx %d%% (%s/%s)", int(pct+0.5), humanTokens(ctxUsed), humanTokens(ctxSize))
+	ctx := fmt.Sprintf("ctx %d%% %s (%s/%s)", int(pct+0.5), bar(pct, ctxColor(pct)), humanTokens(ctxUsed), humanTokens(ctxSize))
 
 	planName := ""
 	if v.Account != nil {
@@ -123,7 +165,7 @@ func line1(v View) string {
 		usage = fmt.Sprintf("Usage — (%s)", planName)
 		resetStr = "Resets —"
 	} else {
-		usage = fmt.Sprintf("Usage %d%% (%s)", int(v.FiveHour.UsedPercentage+0.5), planName)
+		usage = fmt.Sprintf("Usage %d%% %s (%s)", int(v.FiveHour.UsedPercentage+0.5), bar(v.FiveHour.UsedPercentage, blue), planName)
 		resetStr = "Resets —"
 		if v.FiveHour.ResetsAt > 0 {
 			resetStr = "Resets " + time.Unix(v.FiveHour.ResetsAt, 0).Local().Format("3:04pm")
@@ -138,11 +180,11 @@ func line2(v View) string {
 	freshInput := v.Sess.TotalInput + create
 	denom := read + freshInput
 	if denom == 0 {
-		return "cache 0% hit · 0 read · 0 create"
+		return fmt.Sprintf("cache 0%% %s hit · 0 read · 0 create", bar(0, green))
 	}
 	hit := float64(read) / float64(denom) * 100
-	return fmt.Sprintf("cache %d%% hit · %s read · %s create",
-		int(hit+0.5), humanShort(read), humanShort(create))
+	return fmt.Sprintf("cache %d%% %s hit · %s read · %s create",
+		int(hit+0.5), bar(hit, green), humanShort(read), humanShort(create))
 }
 
 func line3(v View) string {

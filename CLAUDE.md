@@ -9,7 +9,7 @@ lives at `~/.local/bin/ccstats` after `./install.sh`.
 ```
 cmd/ccstats/main.go      entry; dispatches statusline / record / version / help
 internal/transcript/     JSONL transcript parser
-internal/stats/          per-session aggregator + 5h window aggregator
+internal/stats/          per-session aggregator (wall-clock duration + avg burn rate)
 internal/pricing/        hardcoded price table + cost compute
 internal/render/         dim 4-line statusline + plan auto-detection
 internal/tips/           markdown loader + expression evaluator + sticky picker
