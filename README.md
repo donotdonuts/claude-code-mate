@@ -66,7 +66,7 @@ settings snippet to merge.
 
 Manual install:
 
-1. `go build -o ~/.local/bin/ccstats ./cmd/ccstats`
+1. `mkdir -p ~/.local/bin && go build -o ~/.local/bin/ccstats ./cmd/ccstats`
 2. Copy `tips/*.md` to `~/.claude/ccstats/tips/`
 3. Copy `commands/usage.md` to `~/.claude/commands/usage.md`
 4. Merge `settings.example.json` into `~/.claude/settings.json`
