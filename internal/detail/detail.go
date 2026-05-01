@@ -98,18 +98,19 @@ func (m model) View() string {
 
 	tokPct := 0.0
 	if m.plan.TokenLimit > 0 {
-		tokPct = float64(m.win.TotalTokens) / float64(m.plan.TokenLimit) * 100
+		tokPct = float64(m.win.BillableTokens) / float64(m.plan.TokenLimit) * 100
 	}
 	costPct := 0.0
 	if m.plan.CostLimit > 0 {
 		costPct = m.win.TotalCost / m.plan.CostLimit * 100
 	}
 
-	tokLine := fmt.Sprintf("%s / %s  %s", commas(m.win.TotalTokens), commas(m.plan.TokenLimit), bar(tokPct, 20))
+	tokLine := fmt.Sprintf("%s / %s  %s", commas(m.win.BillableTokens), commas(m.plan.TokenLimit), bar(tokPct, 20))
 	if tokPct > 100 {
 		tokLine = warnStyle.Render(tokLine)
 	}
-	row(&b, "Tokens", tokLine)
+	row(&b, "Tokens (in+out)", tokLine)
+	row(&b, "Total (incl. cache)", commas(m.win.TotalTokens))
 
 	costLine := fmt.Sprintf("$%.2f / $%.2f  %s", m.win.TotalCost, m.plan.CostLimit, bar(costPct, 20))
 	if m.win.TotalCost > m.plan.CostLimit {
@@ -133,7 +134,7 @@ func (m model) View() string {
 	if until > 0 {
 		row(&b, "Time to reset", durationOf(until))
 		if m.win.BurnRate > 0 {
-			projected := m.win.TotalTokens + int(m.win.BurnRate*until.Minutes())
+			projected := m.win.BillableTokens + int(m.win.BurnRate*until.Minutes())
 			pp := 0.0
 			if m.plan.TokenLimit > 0 {
 				pp = float64(projected) / float64(m.plan.TokenLimit) * 100

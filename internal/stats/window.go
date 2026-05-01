@@ -15,6 +15,7 @@ type WindowStats struct {
 	Anchor           time.Time
 	Reset            time.Time
 	TotalTokens      int
+	BillableTokens   int // input + output; matches plan-limit accounting (cache excluded)
 	TotalInput       int
 	TotalOutput      int
 	TotalCacheRead   int
@@ -101,6 +102,7 @@ func ComputeWindow(now time.Time) (*WindowStats, error) {
 			continue
 		}
 		w.TotalTokens += m.tokens
+		w.BillableTokens += m.input + m.output
 		w.TotalInput += m.input
 		w.TotalOutput += m.output
 		w.TotalCacheRead += m.cacheRead
@@ -115,6 +117,6 @@ func ComputeWindow(now time.Time) (*WindowStats, error) {
 	if durationMin < 1 {
 		durationMin = 1
 	}
-	w.BurnRate = float64(w.TotalTokens) / durationMin
+	w.BurnRate = float64(w.BillableTokens) / durationMin
 	return w, nil
 }
