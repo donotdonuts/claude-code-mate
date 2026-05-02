@@ -39,7 +39,7 @@ func Upsert(s *stats.SessionStats) error {
 
 	breakdown := make(map[string]int)
 	for k, m := range s.Models {
-		breakdown[stats.ShortName(k)] += m.InputTokens + m.OutputTokens + m.CacheReadTokens + m.CacheCreationTokens
+		breakdown[k] += m.InputTokens + m.OutputTokens + m.CacheReadTokens + m.CacheCreationTokens
 	}
 	bjson, _ := json.Marshal(breakdown)
 

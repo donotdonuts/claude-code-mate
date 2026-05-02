@@ -73,6 +73,7 @@ type View struct {
 	CtxPct        *float64
 	FiveHour      *Limit
 	SevenDay      *Limit
+	WeeklyModels  []stats.ModelShare
 	LinesAdded    int
 	LinesRemoved  int
 	HasLineCounts bool
@@ -88,6 +89,10 @@ func Statusline(v View) string {
 
 	b.WriteString(line1(v))
 
+	if seg := lineWeekly(v); seg != "" {
+		b.WriteByte('\n')
+		b.WriteString(seg)
+	}
 	if seg := line2(v); seg != "" {
 		b.WriteByte('\n')
 		b.WriteString(seg)
@@ -212,6 +217,37 @@ func line4(v View) string {
 	parts := make([]string, 0, len(models))
 	for _, m := range models {
 		parts = append(parts, fmt.Sprintf("%s %d%%", m.Model, int(m.Pct+0.5)))
+	}
+	return strings.Join(parts, " · ")
+}
+
+// lineWeekly renders the rolling 7-day usage line: weekly usage bar (from
+// the payload's seven_day rate limit), per-model token share computed from
+// the on-disk sessions.csv (plus the live session), and the weekly reset
+// time. Skipped entirely when neither the limit nor any model data is
+// available.
+func lineWeekly(v View) string {
+	hasUsage := v.SevenDay != nil
+	hasModels := len(v.WeeklyModels) > 0
+	if !hasUsage && !hasModels {
+		return ""
+	}
+
+	parts := make([]string, 0, 4)
+	if hasUsage {
+		parts = append(parts, fmt.Sprintf("Wkly %d%% %s",
+			int(v.SevenDay.UsedPercentage+0.5),
+			bar(v.SevenDay.UsedPercentage, blue)))
+	} else {
+		parts = append(parts, "Wkly —")
+	}
+	resetStr := "Resets —"
+	if hasUsage && v.SevenDay.ResetsAt > 0 {
+		resetStr = "Resets " + time.Unix(v.SevenDay.ResetsAt, 0).Local().Format("Mon 3:04pm")
+	}
+	parts = append(parts, resetStr)
+	for _, m := range v.WeeklyModels {
+		parts = append(parts, fmt.Sprintf("%s %d%%", humanModel(m.Model), int(m.Pct+0.5)))
 	}
 	return strings.Join(parts, " · ")
 }
