@@ -3,13 +3,7 @@
 A Claude Code statusline that surfaces real-time usage at the bottom of your
 CLI:
 
-```
-Opus 4.7 · ctx 47% ████░░░░ (94k/1M) · Usage 18% █░░░░░░░ (Max5) · Resets 3:20pm
-Wkly 42% ███░░░░░ · Resets Mon 3:20pm · opus 65% · sonnet 30% · haiku 5%
-cache 78% ██████░░ hit · 4.2M read · 120k create
-14m · 23 turns · 221 words · +40/-12 LOC · 5M tok · 2k tok/min
-tip: context filling up — consider /compact before next big task
-```
+![ccmate statusline](Group%2011.jpg)
 
 The 5-hour and 7-day usage bars come from Claude Code's statusline payload
 (`rate_limits.five_hour` and `rate_limits.seven_day`) — same data source as
