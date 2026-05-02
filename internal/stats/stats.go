@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"ccstats/internal/pricing"
-	"ccstats/internal/transcript"
+	"ccmate/internal/pricing"
+	"ccmate/internal/transcript"
 )
 
 type ModelUsage struct {

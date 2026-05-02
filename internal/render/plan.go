@@ -1,6 +1,6 @@
 package render
 
-import "ccstats/internal/account"
+import "ccmate/internal/account"
 
 type Plan struct {
 	Name       string

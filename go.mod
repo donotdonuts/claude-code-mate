@@ -1,4 +1,4 @@
-module ccstats
+module ccmate
 
 go 1.26.2
 

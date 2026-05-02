@@ -33,7 +33,7 @@ type Vars struct {
 
 func DefaultDir() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".claude", "ccstats", "tips")
+	return filepath.Join(home, ".claude", "ccmate", "tips")
 }
 
 func Load(dir string) ([]Tip, error) {
@@ -251,7 +251,7 @@ type State struct {
 
 func StatePath(sessionID string) string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".claude", "ccstats", "state", sessionID+".tips.json")
+	return filepath.Join(home, ".claude", "ccmate", "state", sessionID+".tips.json")
 }
 
 func LoadState(sessionID string) State {

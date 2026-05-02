@@ -1,4 +1,4 @@
-# ccstats
+# ccmate
 
 A Claude Code statusline that surfaces real-time usage at the bottom of your
 CLI:
@@ -41,7 +41,7 @@ On a fresh session before the first API response, line 2 shows
 `Usage — (Max5) · Resets —` because `rate_limits` is absent until the model
 has responded once.
 
-**CSV log** (`~/.claude/ccstats/sessions.csv`): one row per session, upserted
+**CSV log** (`~/.claude/ccmate/sessions.csv`): one row per session, upserted
 after every turn (via the `Stop` hook). Schema:
 
 ```
@@ -64,18 +64,36 @@ Requires the Go toolchain (`go` on PATH). Then:
 pwsh -File .\install.ps1
 ```
 
-This builds `ccstats`, copies the default tips into `~/.claude/ccstats/tips/`
-(`%USERPROFILE%\.claude\ccstats\tips\` on Windows), and prints the settings
+This builds `ccmate`, copies the default tips into `~/.claude/ccmate/tips/`
+(`%USERPROFILE%\.claude\ccmate\tips\` on Windows), and prints the settings
 snippet to merge.
 
 Manual install:
 
 1. Build the binary into a directory on PATH:
-   - macOS / Linux: `mkdir -p ~/.local/bin && go build -o ~/.local/bin/ccstats ./cmd/ccstats`
-   - Windows:       `go build -o "$env:USERPROFILE\.local\bin\ccstats.exe" ./cmd/ccstats`
-2. Copy `tips/*.md` to `~/.claude/ccstats/tips/`
+   - macOS / Linux: `mkdir -p ~/.local/bin && go build -o ~/.local/bin/ccmate ./cmd/ccmate`
+   - Windows:       `go build -o "$env:USERPROFILE\.local\bin\ccmate.exe" ./cmd/ccmate`
+2. Copy `tips/*.md` to `~/.claude/ccmate/tips/`
 3. Merge `settings.example.json` into `~/.claude/settings.json`
 4. Restart Claude Code
+
+## Uninstall
+
+```bash
+# macOS / Linux
+./uninstall.sh           # remove the binary; keep tips + sessions.csv
+./uninstall.sh --purge   # also delete ~/.claude/ccmate/ (history + state)
+```
+
+```powershell
+# Windows
+pwsh -File .\uninstall.ps1
+pwsh -File .\uninstall.ps1 -Purge
+```
+
+The uninstaller does not edit `settings.json` — it prints the entries to remove
+by hand (the `statusLine` block and the `ccmate record` Stop hook). Pass
+`--yes` / `-Yes` to skip the `--purge` confirmation prompt.
 
 ## How tips work
 
@@ -130,7 +148,7 @@ public pricing — adjust `internal/pricing/pricing.go` if it drifts.
 ## Architecture
 
 ```
-cmd/ccstats/main.go         entry; subcommand dispatch
+cmd/ccmate/main.go         entry; subcommand dispatch
 internal/transcript/         JSONL parser
 internal/pricing/            price table + cost compute
 internal/stats/              session aggregator + 5h window aggregator

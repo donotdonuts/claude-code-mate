@@ -1,7 +1,7 @@
 {
   "statusLine": {
     "type": "command",
-    "command": "ccstats",
+    "command": "ccmate",
     "padding": 0
   },
   "hooks": {
@@ -11,7 +11,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "ccstats record"
+            "command": "ccmate record"
           }
         ]
       }

@@ -1,23 +1,24 @@
-# ccstats — guidance for Claude Code
+# ccmate — guidance for Claude Code
 
 A Go statusline for Claude Code. Reads the JSON payload Claude Code pipes to
 the statusline command on stdin, emits a 4–5 line summary on stdout. Binary
-lives at `~/.local/bin/ccstats` after `./install.sh`.
+lives at `~/.local/bin/ccmate` after `./install.sh`.
 
 ## Layout
 
 ```
-cmd/ccstats/main.go      entry; dispatches statusline / record / version / help
+cmd/ccmate/main.go      entry; dispatches statusline / record / version / help
 internal/transcript/     JSONL transcript parser
 internal/stats/          per-session aggregator (wall-clock duration + avg burn rate)
 internal/pricing/        hardcoded price table + cost compute
 internal/render/         dim 4-line statusline + plan auto-detection
 internal/tips/           markdown loader + expression evaluator + sticky picker
-internal/csvlog/         atomic upsert into ~/.claude/ccstats/sessions.csv
+internal/csvlog/         atomic upsert into ~/.claude/ccmate/sessions.csv
 internal/account/        reads ~/.claude.json for plan tier
 tips/                    default tip knowledge base (one .md per tip)
 settings.example.json    snippet to merge into ~/.claude/settings.json
 install.sh               build + copy tips
+uninstall.sh             remove binary; --purge also removes ~/.claude/ccmate/
 ```
 
 ## Invariants
@@ -35,8 +36,8 @@ install.sh               build + copy tips
 
 ## Common tasks
 
-- Build: `go build -o ccstats ./cmd/ccstats` (or `./install.sh` for full install).
-- Smoke test the statusline: `echo '{}' | ./ccstats` — should print nothing
+- Build: `go build -o ccmate ./cmd/ccmate` (or `./install.sh` for full install).
+- Smoke test the statusline: `echo '{}' | ./ccmate` — should print nothing
   catastrophic and exit 0.
 - After rebuilding, the user's running Claude Code session picks up the new
   binary on the next statusline tick — no Claude Code restart needed.
@@ -49,10 +50,10 @@ Each tip is a markdown file with frontmatter (`id`, `trigger`, `priority`,
 `cooldown_turns`). The trigger is a small expression DSL (see README for the
 variable list and operators). The highest-priority matching tip whose
 cooldown has expired wins; state is per-session in
-`~/.claude/ccstats/state/<session-id>.json`.
+`~/.claude/ccmate/state/<session-id>.json`.
 
 When adding new trigger variables, update both `internal/tips/tips.go`
-(evaluator) and `cmd/ccstats/main.go` `pickTip` (where `Vars` is populated).
+(evaluator) and `cmd/ccmate/main.go` `pickTip` (where `Vars` is populated).
 
 ## Plan limits
 

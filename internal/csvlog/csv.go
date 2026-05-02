@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"ccstats/internal/stats"
+	"ccmate/internal/stats"
 )
 
 var Header = []string{
@@ -20,7 +20,7 @@ var Header = []string{
 
 func Path() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".claude", "ccstats", "sessions.csv")
+	return filepath.Join(home, ".claude", "ccmate", "sessions.csv")
 }
 
 func Upsert(s *stats.SessionStats) error {

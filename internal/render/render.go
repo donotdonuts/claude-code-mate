@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"ccstats/internal/account"
-	"ccstats/internal/stats"
-	"ccstats/internal/tips"
+	"ccmate/internal/account"
+	"ccmate/internal/stats"
+	"ccmate/internal/tips"
 )
 
 const (
