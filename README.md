@@ -52,16 +52,27 @@ cache_read,cache_create,cost_usd,burn_rate_tpm
 
 ## Install
 
+Requires the Go toolchain (`go` on PATH). Then:
+
 ```bash
+# macOS / Linux
 ./install.sh
 ```
 
-This builds `ccstats`, copies the default tips into `~/.claude/ccstats/tips/`,
-and prints the settings snippet to merge.
+```powershell
+# Windows
+pwsh -File .\install.ps1
+```
+
+This builds `ccstats`, copies the default tips into `~/.claude/ccstats/tips/`
+(`%USERPROFILE%\.claude\ccstats\tips\` on Windows), and prints the settings
+snippet to merge.
 
 Manual install:
 
-1. `mkdir -p ~/.local/bin && go build -o ~/.local/bin/ccstats ./cmd/ccstats`
+1. Build the binary into a directory on PATH:
+   - macOS / Linux: `mkdir -p ~/.local/bin && go build -o ~/.local/bin/ccstats ./cmd/ccstats`
+   - Windows:       `go build -o "$env:USERPROFILE\.local\bin\ccstats.exe" ./cmd/ccstats`
 2. Copy `tips/*.md` to `~/.claude/ccstats/tips/`
 3. Merge `settings.example.json` into `~/.claude/settings.json`
 4. Restart Claude Code

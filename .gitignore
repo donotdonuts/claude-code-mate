@@ -1,5 +1,6 @@
-# Build output — install.sh produces this in the repo root before moving it to ~/.local/bin.
+# Build output — install.sh / install.ps1 produces this in the repo root before moving it.
 ccstats
+ccstats.exe
 
 # Editor / OS noise
 .DS_Store
