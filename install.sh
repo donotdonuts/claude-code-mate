@@ -20,7 +20,7 @@ echo "    installed to $BIN_DIR/ccmate"
 
 echo "==> Installing default tips into $CCSTATS_DIR/tips/"
 mkdir -p "$CCSTATS_DIR/tips"
-cp -n "$HERE"/tips/*.md "$CCSTATS_DIR/tips/" || true
+cp "$HERE"/tips/*.md "$CCSTATS_DIR/tips/"
 
 echo "==> Merging statusLine + Stop hook into $SETTINGS"
 mkdir -p "$CLAUDE_DIR"

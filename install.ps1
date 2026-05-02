@@ -32,7 +32,7 @@ Write-Output "==> Installing default tips into $TipsDir"
 if (-not (Test-Path $TipsDir)) { New-Item -ItemType Directory -Path $TipsDir -Force | Out-Null }
 foreach ($tip in Get-ChildItem -Path (Join-Path $Here 'tips') -Filter '*.md') {
     $dest = Join-Path $TipsDir $tip.Name
-    if (-not (Test-Path $dest)) { Copy-Item $tip.FullName -Destination $dest }
+    Copy-Item $tip.FullName -Destination $dest -Force
 }
 
 # ---------------------------------------------------------------------------

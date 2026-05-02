@@ -31,8 +31,10 @@ uninstall.sh             remove binary; --purge also removes ~/.claude/ccmate/
   (per-model breakdown, burn rate, turn count).
 - **No stdin = exit 0.** The statusline must never block or error when
   invoked outside Claude Code; tests / probes feed empty stdin.
-- **`cp -n` in install.sh is intentional** — re-running the installer
-  must not overwrite user-edited tips or commands.
+- **`install.sh` overwrites tips on every run.** This is the upgrade
+  path: `git pull && ./install.sh` lands new/fixed default tips. Users
+  aren't expected to edit the shipped tip files in place — they should
+  add their own `.md` files alongside.
 
 ## Common tasks
 
